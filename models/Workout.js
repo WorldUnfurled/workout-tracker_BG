@@ -15,7 +15,7 @@ const WorkoutSchema = new Schema({
             type: {
                 type: String
             },
-            distance: { // Optional if cardio
+            distance: { // Optional if cardio workout
                 type: Number
             },
             weight: {
