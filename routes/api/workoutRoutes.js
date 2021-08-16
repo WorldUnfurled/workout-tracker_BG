@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const db = require('../../models');
 
-router.get("/workout/week", async (req, res) => { // View total duration for each of past seven workouts
+router.get("/workouts/range", async (req, res) => { // View total duration for each of past seven workouts
     try {
         const wktAgg = db.Workout.aggregate([
             {
@@ -12,8 +12,8 @@ router.get("/workout/week", async (req, res) => { // View total duration for eac
             },
         ]);
 
-        const workout = await wktAgg.find().limit(7);
-        res.json(workout);
+        const workouts = await wktAgg.find().limit(7);
+        res.json(workouts);
     } catch (err) {
         res.json(err);
     }
