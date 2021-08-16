@@ -37,11 +37,19 @@ router.get("/range", async (req, res) => { // View total duration for each of pa
     }
 });
 
-router.put("/:id", async (req, res) => { // Add exercises to most recent workout plan
-
+router.put("/:id", async (req, res) => { // Add exercises to most recent workout plan | addExercise()
+    try{
+        const workout = await db.Workout.findByIdAndUpdate(
+            req.params.id,
+            {$push: { exercises: req.body }}
+        );
+        res.json(workout);
+    } catch (err) {
+        res.json(err);
+    }
 });
 
-router.post("/", ({ body }, res) => { // Add new exercises to new workout plan
+router.post("/", ({ body }, res) => { // Add new exercises to new workout plan | createWorkout()
     try {
         const workout = await db.Workout.create(body);
         res.json(workout);
