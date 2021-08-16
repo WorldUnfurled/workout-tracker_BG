@@ -1,7 +1,25 @@
 const router = require('express').Router();
 const db = require('../../models');
 
-router.get("/workouts/range", async (req, res) => { // View total duration for each of past seven workouts
+router.get("/workouts", (req, res) => { // getLastWorkout()
+    try {
+        const wktAgg = db.Workout.aggregate([
+            {
+                $set: {
+                  totalDuration: { $sum: "$duration" } ,
+                  combinedWeight: { $sum: "$weight" }
+                }
+            },
+        ]);
+
+        const workouts = await wktAgg.find();
+        res.json(workouts);
+    } catch (err) {
+        res.json(err);
+    }
+});
+
+router.get("/workouts/range", async (req, res) => { // View total duration for each of past seven workouts | getWorkoutsInRange()
     try {
         const wktAgg = db.Workout.aggregate([
             {
@@ -17,10 +35,6 @@ router.get("/workouts/range", async (req, res) => { // View total duration for e
     } catch (err) {
         res.json(err);
     }
-});
-
-router.get("/workout", (req, res) => { // View combined weight for each of past seven workouts
-
 });
 
 router.post("/workout", (req, res) => { // Add exercises to most recent workout plan
