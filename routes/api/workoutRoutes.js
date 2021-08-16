@@ -1,40 +1,28 @@
 const router = require('express').Router();
 const db = require('../../models');
 
-router.get("/", (req, res) => { // getLastWorkout()
-    try {
-        const wktAgg = db.Workout.aggregate([
+router.get("/", async (req, res) => { // getLastWorkout()
+        const workouts = await db.Workout.aggregate([
             {
-                $set: {
-                  totalDuration: { $sum: "$duration" } ,
-                  combinedWeight: { $sum: "$weight" }
+                $addFields: {
+                  totalDuration: { $sum: "$exercises.duration" }
                 }
             },
-        ]);
-
-        const workouts = await wktAgg.find();
+        ]).sort({day: 1});
+        console.log(workouts);
         res.json(workouts);
-    } catch (err) {
-        res.json(err);
-    }
 });
 
 router.get("/range", async (req, res) => { // View total duration for each of past seven workouts | getWorkoutsInRange()
-    try {
-        const wktAgg = db.Workout.aggregate([
-            {
-                $set: {
-                  totalDuration: { $sum: "$duration" } ,
-                  combinedWeight: { $sum: "$weight" }
-                }
-            },
-        ]);
-
-        const workouts = await wktAgg.find().limit(7);
+        const workouts = await db.Workout.aggregate([
+                {
+                    $addFields: {
+                      totalDuration: { $sum: "$exercises.duration" }
+                    }
+                },
+        ]).limit(7);
+        console.log(workouts);
         res.json(workouts);
-    } catch (err) {
-        res.json(err);
-    }
 });
 
 router.put("/:id", async (req, res) => { // Add exercises to most recent workout plan | addExercise()
@@ -49,11 +37,15 @@ router.put("/:id", async (req, res) => { // Add exercises to most recent workout
     }
 });
 
-router.post("/", ({ body }, res) => { // Add new exercises to new workout plan | createWorkout()
+router.post("/", async (req, res) => { // Add new exercises to new workout plan | createWorkout()
     try {
-        const workout = await db.Workout.create(body);
+        // console.log(req);
+        // console.log(res + " cw");
+        const workout = await db.Workout.create(req.body);
         res.json(workout);
     } catch (err) {
         res.json(err);
     }
 });
+
+module.exports = router;
