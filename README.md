@@ -7,9 +7,6 @@
 * [Installing](#installing)
 * [Usage](#usage)
 * [Testing](#testing)
-* [Contributing](#contributing)
-* [License](#license)
-* [Questions](#questions)
 
 ## Description
 A fitness application that lets users create and track daily workouts.
